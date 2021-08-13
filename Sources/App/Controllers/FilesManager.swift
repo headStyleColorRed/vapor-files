@@ -17,7 +17,7 @@ final class FilesManager {
         }
 
         let futureFiles = body.files.map { file -> EventLoopFuture<String> in
-            let fileNameResponse = body.pathId.finished(with: "/") + file.filename
+            let fileName = file.filename
             return req.application.fileio.openFile(path: path + "/" + file.filename,
                                                    mode: .write,
                                                    flags: .allowFileCreation(posixMode: 0x744),
@@ -28,7 +28,7 @@ final class FilesManager {
                                                  eventLoop: req.eventLoop)
                         .flatMapThrowing { _ in
                             try handle.close()
-                            return "fileNameResponse"
+                            return fileName
                         }
                 }
         }
