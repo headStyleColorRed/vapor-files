@@ -36,8 +36,12 @@ final class FilesManager {
     }
 
     func getFile(_ req: Request, app: Application) throws -> Response {
-        let body = try req.content.decode(RetrieveFilesQuery.self)
-        let path = app.directory.workingDirectory + "files/" + body.pathId.finished(with: "/") + body.fileName
+        guard let pathId = req.parameters.get("pathId"), let fileName = req.parameters.get("fileName") else {
+            throw Abort(.custom(code: 418, reasonPhrase: "Missing parameters pathId or filename in url"))
+        }
+
+
+        let path = app.directory.workingDirectory + "files/" + pathId.finished(with: "/") + fileName
 
         if FileManager.default.fileExists(atPath: path) {
             return req.fileio.streamFile(at: path)

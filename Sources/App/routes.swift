@@ -10,7 +10,7 @@ func routes(_ app: Application) throws {
         return try filesManager.saveFiles(req, app: app)
     }
 
-    app.get("getFile") { req -> Response in
+    app.get("getFile", ":pathId", ":fileName") { req -> Response in
         return try filesManager.getFile(req, app: app)
     }
 
