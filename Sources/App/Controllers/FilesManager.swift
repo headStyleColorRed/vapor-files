@@ -37,14 +37,16 @@ final class FilesManager {
     }
 
     private func iterateFileName(path: String, fileName: String) -> String {
-        var counter = 1
+        var counter = 0
 
         if FileManager.default.fileExists(atPath: path.finished(with: "/") + fileName) {
-            while FileManager.default.fileExists(atPath: path.finished(with: "/") + fileName + "(\(counter))") {
+            counter += 1
+            while FileManager.default.fileExists(atPath: path.finished(with: "/") + "(\(counter))" + fileName) {
                 counter += 1
             }
         }
-        return fileName.appending("(\(counter))")
+
+        return counter == 0 ? fileName : "(\(counter))".appending(fileName)
     }
 
 
