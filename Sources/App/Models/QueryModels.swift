@@ -12,11 +12,6 @@ struct NewFileQuery: Content {
     let files: [File]
 }
 
-struct RetrieveFilesQuery: Content {
-    let fileName: String
-    let pathId: String
-}
-
 struct DeleteFileQuery: Content {
     let fileName: String
     let pathId: String

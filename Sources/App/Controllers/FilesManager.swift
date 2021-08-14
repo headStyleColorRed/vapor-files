@@ -17,8 +17,9 @@ final class FilesManager {
         }
 
         let futureFiles = body.files.map { file -> EventLoopFuture<String> in
-            let fileName = file.filename
-            return req.application.fileio.openFile(path: path + "/" + file.filename,
+            let fileName = self.iterateFileName(path: path, fileName: file.filename)
+
+            return req.application.fileio.openFile(path: path + "/" + fileName,
                                                    mode: .write,
                                                    flags: .allowFileCreation(posixMode: 0x744),
                                                    eventLoop: req.eventLoop)
@@ -34,6 +35,22 @@ final class FilesManager {
         }
         return futureFiles.flatten(on: req.eventLoop)
     }
+
+    private func iterateFileName(path: String, fileName: String) -> String {
+        var counter = 1
+
+        if FileManager.default.fileExists(atPath: path.finished(with: "/") + fileName) {
+            while FileManager.default.fileExists(atPath: path.finished(with: "/") + fileName + "(\(counter))") {
+                counter += 1
+            }
+        }
+        return fileName.appending("(\(counter))")
+    }
+
+
+
+
+
 
     func getFile(_ req: Request, app: Application) throws -> Response {
         guard let pathId = req.parameters.get("pathId"), let fileName = req.parameters.get("fileName") else {
@@ -61,4 +78,6 @@ final class FilesManager {
             throw Abort(.custom(code: 400, reasonPhrase: "File not found"))
         }
     }
+
+    // MARK: - Utils
 }

@@ -14,7 +14,7 @@ func routes(_ app: Application) throws {
         return try filesManager.getFile(req, app: app)
     }
 
-    app.delete("deleteFile") { req -> String in
+    app.post("deleteFile") { req -> String in
         return try filesManager.deleteFile(req, app: app)
     }
 }
